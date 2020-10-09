@@ -1,0 +1,17 @@
+<html>
+<body>
+
+    <h1>Voici les données que vous avez scrappé!</h1>
+
+    {% for table in tables %}
+        {{titles[loop.index]}}
+        {{ table|safe }}
+    {% endfor %}
+    
+    <h1>Voila les informations croisés avec votre préoccupation</h1>
+    <p>Voici la décision se rapprochant le plus de votre cas d'espèce: {{ result }}</p>
+    <p>La décision a obtenu ce score : {{ score }}</p>
+    <p>Voici toutes les informations vous permettant de retrouver la jurisprudence en question: {{ jp_proche }}</p>
+
+</body>
+</html>

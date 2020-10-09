@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>    
+    <title>Mon application juridique</title>
+    <link rel = "stylesheet" type = "text/css" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>    
+    
+    <header>    
+        <div class="container">
+        <div id="brandname">    
+            Application juridique
+        </div>
+        <header>Veuillez saisir votre recherche dans l'espace ci-dessous</header>
+    
+    </div>
+    </header>
+    
+    <div class = "scrap-container">
+        <form method="POST">
+            <input name="text">
+            <input type="submit">
+        </form>
+    </div>
+
+</body>
+</html>

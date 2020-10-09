@@ -1,0 +1,16 @@
+body {
+    background-color: powerblue;
+}
+.container{
+    width: 100%;
+    margin: auto;
+    overflow: hidden;
+}
+header {
+    color: blue;
+    font: size 40px;
+}
+.brandname{
+    color: black;
+    font-size: 30px;
+}
