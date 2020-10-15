@@ -25,12 +25,12 @@ def cosine_sim(df, cas_personnel):
     count_vectorizer = CountVectorizer(stop_words='french')
     count_vectorizer = CountVectorizer()
     sparse_matrix = count_vectorizer.fit_transform(df["décision"])
-    sparse_matrix.todense()
     X = count_vectorizer.transform(df['décision'])
-    com = f'{cas_personnel}'
-    com_vectorizé = count_vectorizer.transform(np.array([com]))
-    ligne = np.argmax(cosine_similarity(com_vectorizé,X))
-    score = cosine_similarity(com_vectorizé,X).max()
+    com_vectorizé = count_vectorizer.transform(np.array([f'{cas_personnel}']))
+    doc_term_matrix1 = com_vectorizé.todense()
+    df["score"] = cosine_similarity(X,doc_term_matrix1)
+    df = df.sort_values(by='score', ascending=False)
+    ligne, score = np.argmax(cosine_similarity(doc_term_matrix1,X)), cosine_similarity(doc_term_matrix1,X).max()
     return df, ligne, score
 
 def resultat(df, ligne, score):

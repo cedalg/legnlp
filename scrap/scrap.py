@@ -24,7 +24,7 @@ def récupérerDonnées(keywords):
     coche_ja.click()
     time.sleep(3)
     liste_container_jp = browser.find_elements_by_xpath('/html/body/div[1]/div/main/div/div/form/div/div[3]/div[2]/div/article')
-    print(liste_container_jp)
+#    print(liste_container_jp)
     jp_on_page = range(len(liste_container_jp))
     time.sleep(3)
     button_suivant = browser.find_element_by_css_selector(".pager-next > a:nth-child(1)")
@@ -34,6 +34,7 @@ def récupérerDonnées(keywords):
     liste_formation = []
     liste_dates = []
     liste_numéro = []
+    liste_président = []
     liste_rapporteur = []
     liste_rapporteur_public = []
     liste_avocats = []
@@ -42,11 +43,11 @@ def récupérerDonnées(keywords):
     count_pages = 0
     nb_total_jp = browser.find_element_by_css_selector(".nb-result")
     nombre = nb_total_jp.text.split()[0]
+    print(nombre)
     while count_jp < int(nombre):
         liste_container_jp = browser.find_elements_by_xpath('/html/body/div[1]/div/main/div/div/form/div/div[3]/div[2]/div/article')
         jp_on_page = range(len(liste_container_jp))
         for i in jp_on_page:
-            try:
                 jurisprudence = browser.find_elements_by_class_name('name-result-item')
                 jurisprudence[i].click()
                 info = browser.find_element_by_css_selector(".main-title")
@@ -55,21 +56,28 @@ def récupérerDonnées(keywords):
                 liste_formation.append(info[1])
                 liste_dates.append(info[2])
                 liste_numéro.append(info[3])
-                rapporteur = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(1) > dd:nth-child(2)')
-                liste_rapporteur.append(rapporteur.text)
-                rapporteur_public = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(2) > dd:nth-child(2)')
-                liste_rapporteur_public.append(rapporteur_public.text)
-                avocats = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(3) > dd:nth-child(2)')
-                nom_avocats = avocats.text.split(';')
-                liste_avocats.append(nom_avocats)
+                time.sleep(3)
+                if info[0] == "Conseil d'Etat" or info[0] == "Conseil d'État":
+                        liste_président.append(" ")
+                        rapporteur = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(1) > dd:nth-child(2)')
+                        liste_rapporteur.append(rapporteur.text)   
+                        rapporteur_public = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(2) > dd:nth-child(2)')
+                        liste_rapporteur_public.append(rapporteur_public.text)     
+                        avocats = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(3) > dd:nth-child(2)')
+                        liste_avocats.append(avocats.text)
+                        time.sleep(3)
+                else:        
+                    president = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(1) > dd:nth-child(2)')
+                    liste_président.append(president.text)
+                    rapporteur = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(2) > dd:nth-child(2)')
+                    liste_rapporteur.append(rapporteur.text)   
+                    rapporteur_public = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(3) > dd:nth-child(2)')
+                    liste_rapporteur_public.append(rapporteur_public.text)
+                    avocats = browser.find_element_by_css_selector('div.frame-block:nth-child(3) > div:nth-child(4) > dd:nth-child(2)')
+                    liste_avocats.append(avocats.text)
+                    time.sleep(3)
                 décision = browser.find_element_by_css_selector('.content-page')
                 liste_décision.append(décision.text)
-                time.sleep(3)
-                count_jp += 1
-                print(f'nombre de jp scrappés : {count_jp}')
-                browser.back()
-                time.sleep(3)
-            except:
                 count_jp += 1
                 print(f'nombre de jp scrappés : {count_jp}')
                 browser.back()
@@ -78,18 +86,17 @@ def récupérerDonnées(keywords):
             count_pages += 1
             print(f"nombre de pages analysés : {count_pages}")
             button_suivant = browser.find_element_by_css_selector(".pager-next > a:nth-child(1)")
-            time.sleep(3)
             button_suivant.click()
             time.sleep(3)
         except:
             pass
     else:
-        print("c'est bon t'as tout scrappé")    
-    return liste_tribunal, liste_formation, liste_dates, liste_numéro, liste_rapporteur, liste_rapporteur_public, liste_avocats, liste_décision
+        print("c'est bon t'as tout scrappé")
+    return liste_tribunal, liste_formation, liste_dates, liste_numéro, liste_président, liste_rapporteur, liste_rapporteur_public, liste_avocats, liste_décision
 
-def créationDataFrame(liste_tribunal, liste_formation, liste_dates, liste_numéro, liste_rapporteur, liste_rapporteur_public, liste_avocats, liste_décision):
-    df = pd.DataFrame(list(zip(liste_tribunal, liste_formation, liste_dates, liste_numéro, liste_rapporteur, liste_rapporteur_public, liste_avocats, liste_décision)),
-                 columns = ["tribunal", "formation", "dates", "numéro de la jurisprudence", "nom du rapporteur", "nom du rapporteur public","avocats", "décision"])
+def créationDataFrame(liste_tribunal, liste_formation, liste_dates, liste_numéro, liste_président, liste_rapporteur, liste_rapporteur_public, liste_avocats, liste_décision):
+    df = pd.DataFrame(list(zip(liste_tribunal, liste_formation, liste_dates, liste_numéro, liste_président, liste_rapporteur, liste_rapporteur_public, liste_avocats, liste_décision)),
+                 columns = ["tribunal", "formation", "dates", "numéro de la jurisprudence", "nom du président", "nom du rapporteur", "nom du rapporteur public", "avocats", "décision"])
     return df
 
 def save_csv(df, keywords):
